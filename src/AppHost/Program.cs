@@ -1,4 +1,5 @@
 using AppHost.Extensions;
+using Microsoft.Extensions.Hosting;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -14,8 +15,8 @@ var rabbitPassword = builder.CreateParameter("rabbit-password", "password");
 var rabbit = builder.AddRabbitMQ("rabbitmq", userName: rabbitUsername, password: rabbitPassword, port: 5672)
     .WithManagementPlugin();
 
-builder.AddProject<EventProducer>("event-producer")
-    .WithReference(rabbit, "RabbitMQ");
+// builder.AddProject<EventProducer>("event-producer")
+//     .WithReference(rabbit, "RabbitMQ");
 
 var consumerDb = postgres.AddDatabase("consumer");
 builder.AddProject<EventConsumer>("event-consumer")
@@ -28,4 +29,4 @@ await app.StartAsync();
 
 // TODO: Create database
 
-await app.StopAsync();
+await app.WaitForShutdownAsync();

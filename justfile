@@ -3,6 +3,11 @@
 default:
     just --list
     
+# Run all services via Aspire
 run:
     dotnet build
-    cd AppHost && dotnet run
+    cd src/AppHost && dotnet run
+
+# Describe the producer service
+describe-producer:
+    cd src/EventProducer && dotnet run -- describe
