@@ -1,11 +1,24 @@
 using EventProducer.Messages;
 using Oakton;
+using ServiceDefaults;
+using ServiceDefaults.Messages;
 using Wolverine;
+using Wolverine.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsDevelopment())
+{
+    // Delay for dependencies to start properly
+    await Task.Delay(5000);
+}
+
 builder.AddServiceDefaults();
-builder.UseWolverineDefaults(typeof(Program).Assembly);
+builder.UseWolverineDefaults(typeof(Program).Assembly, options =>
+{
+    options.PublishMessage<UserCreated>().ToRabbitQueue(Const.Queues.UserCreated);
+    options.PublishMessage<TaskCreated>().ToRabbitQueue(Const.Queues.TaskCreated);
+});
 
 var app = builder.Build();
 

@@ -15,18 +15,18 @@ var rabbitPassword = builder.CreateParameter("rabbit-password", "password");
 var rabbit = builder.AddRabbitMQ("rabbitmq", userName: rabbitUsername, password: rabbitPassword, port: 5672)
     .WithManagementPlugin();
 
-// builder.AddProject<EventProducer>("event-producer")
-//     .WithReference(rabbit, "RabbitMQ");
+builder.AddProject<EventProducer>("event-producer")
+    .WithReference(rabbit, "RabbitMQ");
 
 var consumerDb = postgres.AddDatabase("consumer");
 builder.AddProject<EventConsumer>("event-consumer")
-    .WithReference(consumerDb, "Database")
+    .WithReference(consumerDb, "Postgres")
     .WithReference(rabbit, "RabbitMQ");
 
 var app = builder.Build();
 
 await app.StartAsync();
 
-// TODO: Create database
+await app.CreateDatabase(consumerDb);
 
 await app.WaitForShutdownAsync();

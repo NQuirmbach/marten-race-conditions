@@ -25,9 +25,6 @@ public static class WolverineExtensions
             {
                 options.UseRabbitMq(new Uri(connectionString))
                     .AutoProvision();
-                
-                options.PublishMessage<UserCreated>().ToRabbitQueue("user-created");
-                options.PublishMessage<TaskCreated>().ToRabbitQueue("task-created");
             }
 
             options.Services.AddOpenTelemetry();
