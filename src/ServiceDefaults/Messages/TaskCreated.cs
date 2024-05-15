@@ -2,6 +2,7 @@ using Wolverine;
 
 namespace ServiceDefaults.Messages;
 
+[UsedImplicitly]
 public class TaskCreated : IMessage
 {
     public Guid Id { get; init; }

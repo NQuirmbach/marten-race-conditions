@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.Hosting;
 
 public static class WolverineExtensions
 {
-    public static void UseWolverineDefaults(this WebApplicationBuilder builder, Assembly applicationAssembly)
+    public static void UseWolverineDefaults(this WebApplicationBuilder builder, Assembly applicationAssembly, Action<WolverineOptions>? setup = null)
     {
         builder.Services.AddResourceSetupOnStartup();
         
@@ -31,6 +31,8 @@ public static class WolverineExtensions
             }
 
             options.Services.AddOpenTelemetry();
+            
+            setup?.Invoke(options);
         });
     } 
 }
