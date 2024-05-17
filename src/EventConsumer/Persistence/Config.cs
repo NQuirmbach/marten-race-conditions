@@ -1,5 +1,5 @@
+using EventConsumer.Todos;
 using EventConsumer.Users;
-using EventConsumer.UserTasks;
 using Marten;
 using Marten.Events.Daemon.Resiliency;
 using Marten.Events.Projections;
@@ -33,6 +33,6 @@ public static class Config
     private static void AddProjections(ProjectionOptions p)
     {
         p.Add<UserProjection>(ProjectionLifecycle.Async);
-        p.Add<UserTaskProjection>(ProjectionLifecycle.Async);
+        p.Add<TodoProjection>(ProjectionLifecycle.Async);
     }
 }

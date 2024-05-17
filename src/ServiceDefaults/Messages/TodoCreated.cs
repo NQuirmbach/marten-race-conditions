@@ -3,9 +3,10 @@ using Wolverine;
 namespace ServiceDefaults.Messages;
 
 [UsedImplicitly]
-public class TaskCreated : IMessage
+public class TodoCreated : IMessage
 {
     public Guid Id { get; init; }
     public string Description { get; init; } = null!;
-    public Guid UserId { get; init; }
+    public Guid CreatedBy { get; init; }
+    public Guid ChangedBy { get; set; }
 }

@@ -17,7 +17,7 @@ builder.AddServiceDefaults();
 builder.UseWolverineDefaults(typeof(Program).Assembly, options =>
 {
     options.PublishMessage<UserCreated>().ToRabbitQueue(Const.Queues.UserCreated);
-    options.PublishMessage<TaskCreated>().ToRabbitQueue(Const.Queues.TaskCreated);
+    options.PublishMessage<TodoCreated>().ToRabbitQueue(Const.Queues.TaskCreated);
 });
 
 var app = builder.Build();

@@ -24,14 +24,14 @@ public class GenerateEventsHandler
         var users = GenerateUserEvents();
         
         _logger.LogInformation("Generated {Count} user events", users.Length);
-        var tasks = GenerateTaskEvents(users);
+        var todos = GenerateTodoEvents(users);
 
-        _logger.LogInformation("Generated {Count} task events", tasks.Length);
+        _logger.LogInformation("Generated {Count} todo events", todos.Length);
 
         var result = new List<IMessage>();
         
         result.AddRange(users);
-        result.AddRange(tasks);
+        result.AddRange(todos);
 
         return result;
     }
@@ -43,10 +43,10 @@ public class GenerateEventsHandler
         return faker.Generate(50).ToArray();
     }
     
-    private static TaskCreated[] GenerateTaskEvents(IEnumerable<UserCreated> events)
+    private static TodoCreated[] GenerateTodoEvents(IEnumerable<UserCreated> events)
     {
         var userIds = events.Select(m => m.Id).Distinct().ToArray();
-        var faker = new TaskCreatedFaker(userIds);
+        var faker = new TodoCreatedFaker(userIds);
 
         return faker.Generate(100).ToArray();
     }
@@ -62,12 +62,13 @@ public sealed class UserCreatedFaker : Faker<UserCreated>
     }
 }
 
-public sealed class TaskCreatedFaker : Faker<TaskCreated>
+public sealed class TodoCreatedFaker : Faker<TodoCreated>
 {
-    public TaskCreatedFaker(Guid[] userIds)
+    public TodoCreatedFaker(Guid[] userIds)
     {
         RuleFor(m => m.Id, _ => Guid.NewGuid());
         RuleFor(m => m.Description, f => f.Commerce.Product());
-        RuleFor(m => m.UserId, f => f.PickRandom(userIds));
+        RuleFor(m => m.CreatedBy, f => f.PickRandom(userIds));
+        RuleFor(m => m.ChangedBy, f => f.PickRandom(userIds));
     }
 }
