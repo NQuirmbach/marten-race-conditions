@@ -6,7 +6,7 @@ default:
 # Run all services via Aspire
 run:
     dotnet build
-    cd src/AppHost && dotnet run
+    cd src/AppHost && dotnet run --no-build
 
 # Describe the producer service
 describe-producer:

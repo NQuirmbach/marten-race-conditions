@@ -27,7 +27,7 @@ public static class Config
         // Turn on the async daemon in "Solo" mode
         .AddAsyncDaemon(DaemonMode.Solo);
         
-        builder.Services.AddScoped<IEventStore, MartenEventStore>();
+        builder.Services.AddScoped<IEventRepository, MartenEventRepository>();
     }
 
     private static void AddProjections(ProjectionOptions p)

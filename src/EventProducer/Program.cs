@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
     // Delay for dependencies to start properly
-    await Task.Delay(5000);
+    await builder.WaitForRabbitMq();
 }
 
 builder.AddServiceDefaults();

@@ -8,15 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
     // Delay for dependencies to start properly
-    await Task.Delay(5000);
+    await builder.WaitForRabbitMq();
 }
 
 builder.AddServiceDefaults();
 builder.AddMartenDefaults();
 builder.UseWolverineDefaults(typeof(Program).Assembly, options =>
 {
-    options.ListenToRabbitQueue(Const.Queues.UserCreated);
-    options.ListenToRabbitQueue(Const.Queues.TaskCreated);
+    const int listeners = 2;
+    options.ListenToRabbitQueue(Const.Queues.UserCreated)
+        .ListenerCount(listeners);
+    options.ListenToRabbitQueue(Const.Queues.TaskCreated)
+        .ListenerCount(listeners);
 });
 
 var app = builder.Build();

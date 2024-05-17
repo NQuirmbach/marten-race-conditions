@@ -1,5 +1,4 @@
 using EventConsumer.Persistence;
-using JetBrains.Annotations;
 using ServiceDefaults.Messages;
 
 namespace EventConsumer.Users;
@@ -9,8 +8,10 @@ public class User : Aggregate
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
 
-    public User(UserCreated created)
+    public User(Guid id, string firstName, string lastName)
     {
+        var created = new UserCreated(id, firstName, lastName);
+        
         Apply(created);
         AddUncommittedEvent(created);
     }

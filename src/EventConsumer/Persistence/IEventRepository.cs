@@ -2,16 +2,17 @@ using Marten;
 
 namespace EventConsumer.Persistence;
 
-public interface IEventStore
+public interface IEventRepository
 {
     Task SaveAsync<T>(T aggregate, CancellationToken cancellationToken = default) where T : Aggregate;
+    IDocumentSession OpenSession();
 }
 
-public class MartenEventStore : IEventStore
+public class MartenEventRepository : IEventRepository
 {
     private readonly IDocumentStore _store;
 
-    public MartenEventStore(IDocumentStore store)
+    public MartenEventRepository(IDocumentStore store)
     {
         _store = store;
     }
@@ -30,4 +31,6 @@ public class MartenEventStore : IEventStore
         // Once successfully persisted, clear events from list of uncommitted events
         aggregate.ClearUncommittedEvents();
     }
+
+    public IDocumentSession OpenSession() => _store.LightweightSession();
 }

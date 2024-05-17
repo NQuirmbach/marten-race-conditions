@@ -5,10 +5,13 @@ namespace EventConsumer.Todos;
 
 public class TodoCreatedHandler
 {
-    public async Task HandleAsync(TodoCreated message, IEventStore store, CancellationToken cancellationToken)
+    public async Task HandleAsync(TodoCreated message, IEventRepository repository, CancellationToken cancellationToken)
     {
-        var task = new Todo(message);
-
-        await store.SaveAsync(task, cancellationToken);
+        var todo = new Todo(message.Id, message.Description);
+        
+        todo.AssignUser(message.CreatedBy, UserAssignment.Created);
+        todo.AssignUser(message.ChangedBy, UserAssignment.Changed);
+        
+        await repository.SaveAsync(todo, cancellationToken);
     }
 }

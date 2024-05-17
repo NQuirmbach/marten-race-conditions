@@ -1,6 +1,6 @@
 using EventConsumer.Persistence;
+using EventConsumer.Todos.Events;
 using EventConsumer.Users;
-using JetBrains.Annotations;
 using ServiceDefaults.Messages;
 
 namespace EventConsumer.Todos;
@@ -8,44 +8,54 @@ namespace EventConsumer.Todos;
 public class Todo : Aggregate
 {
     public string Description { get; private set; } = null!;
-    public TodoUser CreatedBy { get; private set; }
-    public TodoUser ChangedBy { get; private set; }
+    public User? CreatedBy { get; private set; }
+    public User? ChangedBy { get; private set; }
     
     
-    public Todo(TodoCreated created)
+    public Todo(Guid id, string description)
     {
-        Apply(created);
-        AddUncommittedEvent(created);
+        var create = new CreateTodo(id, description);
+        
+        Apply(create);
+        AddUncommittedEvent(create);
     }
-    
-    private Todo() { }
 
+    private Todo()
+    { }
+    
     [UsedImplicitly]
-    public void Apply(TodoCreated created)
+    public void Apply(CreateTodo created)
     {
         Id = created.Id;
         Description = created.Description;
-        CreatedBy = new TodoUser(created.CreatedBy);
-        ChangedBy = new TodoUser(ChangedBy.Id);
 
         Version++;
     }
 
-    public void SetCreatedBy(string firstName, string lastName)
+    public void AssignUser(Guid userId, UserAssignment assignment)
     {
-        CreatedBy = CreatedBy with
-        {
-            FirstName = firstName,
-            Lastname = lastName
-        };
+        AddUncommittedEvent(new TodoUserAssigned(Id, userId, assignment));
+        Version++;
     }
 
-    public void SetChangedBy(string firstName, string lastName)
+    public void SetAssignment(User user, UserAssignment assignment)
     {
-        ChangedBy = ChangedBy with
+        switch (assignment)
         {
-            FirstName = firstName,
-            Lastname = lastName
-        };
+            case UserAssignment.Created:
+                CreatedBy = user;
+                break;
+            case UserAssignment.Changed:
+                ChangedBy = user;
+                break;
+            default:
+                throw new NotImplementedException();
+        }
     }
+}
+
+public enum UserAssignment
+{
+    Created,
+    Changed
 }

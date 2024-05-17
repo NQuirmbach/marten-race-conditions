@@ -5,10 +5,10 @@ namespace EventConsumer.Users;
 
 public class UserCreatedHandler
 {
-    public async Task HandleAsync(UserCreated message, IEventStore store, CancellationToken cancellationToken)
+    public async Task HandleAsync(UserCreated message, IEventRepository repository, CancellationToken cancellationToken)
     {
-        var user = new User(message);
+        var user = new User(message.Id, message.FirstName, message.LastName);
         
-        await store.SaveAsync(user, cancellationToken);
+        await repository.SaveAsync(user, cancellationToken);
     }
 }
